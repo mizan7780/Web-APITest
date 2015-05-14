@@ -1,0 +1,166 @@
+﻿@{
+    ViewBag.Title = "customerInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br /><br />
+
+<center>
+    <h2>Customer Information</h2>
+    <table>
+        <tr>
+            <td>Customer ID :</td>
+            <td><input type="text" id="T1" /></td>
+        </tr>
+        <tr>
+            <td>Customer Name :</td>
+            <td><input type="text" id="T2" /></td>
+        </tr>
+        <tr>
+            <td>Customer Address :</td>
+            <td><input type="text" id="T3" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" id="B1" value="Insert" />
+                <input type="button" id="B2" value="Update" />
+                <input type="button" id="B3" value="Search" />
+                <input type="button" id="B4" value="Delete" />
+                <input type="button" id="B5" value="ShowAll" />
+            </td>
+        </tr>       
+    </table>
+    <br />
+    <hr />
+    <br />
+    <div id="divAllCustomer">
+
+    </div>
+</center>
+
+
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#B5').click('', function () {
+            $.ajax({
+                type: 'Get',
+                dataType: 'json',
+                contentType: 'application/json',
+                url: '/api/Customer',
+                data: "",
+                success: function (data) {
+                    var strTable = "<table id='tbl'><tr><th>Customer ID</th><th>Customer Name</th><th>Customer Address</th></tr>";
+                    for (var i = 0; i < data.length; i++)
+                    {
+                        strTable += "<tr><td>" + data[i].customerID + "</td><td>" + data[i].customerName + "</td><td>" + data[i].customerAddress + "</td></tr>";
+                    }
+                    divAllCustomer.innerHTML = strTable+"</table>";
+                },
+                error: function () {
+                    alert('Error...');
+                }
+            })
+        });
+
+        $('#B4').click('', function () {
+            $.ajax({
+                type: 'Delete',
+                dataType: 'json',
+                contentType: 'application/json',
+                url: '/api/Customer/' + $('#T1').val(),
+                data:"",
+                success: function (data) {
+                    alert("Delete Successfull...");
+                    $('#T1').val('');
+                    $('#T2').val('');
+                    $('#T3').val('');
+                },
+                error: function () {
+                    alert('Error...');
+                }
+            });
+
+        });
+
+        $('#B2').click('', function () {
+            var str = {
+                customerID: $('#T1').val(),
+                customerName: $('#T2').val(),
+                customerAddress: $('#T3').val()
+            };
+            $.ajax({
+                type: 'Put',
+                dataType: 'json',
+                contentType: 'application/json',
+                url: '/api/Customer/'+$('#T1').val(),
+                data: JSON.stringify(str),
+                success: function (data) {
+                    alert("Update Successfull...");
+                },
+                error: function () {
+                    alert('Error...');
+                }
+            });
+
+        });
+
+
+        $('#B1').click('', function () {
+            var str = {
+                customerID: $('#T1').val(),
+                customerName: $('#T2').val(),
+                customerAddress: $('#T3').val()
+            };
+            $.ajax({
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                url: '/api/Customer/',
+                data: JSON.stringify(str),
+                success: function (data) {
+                    alert("Insert Successfull...");
+                    $('#T1').val("");
+                    $('#T2').val("");
+                    $('#T3').val("");
+                },
+                error: function () {
+                    alert('Error...');
+                }
+            });
+
+        });
+
+        $('#B3').click('', function () {
+            $.ajax({
+                type: 'Get',
+                dataType: 'json',
+                contentType: 'application/json',
+                url: '/api/Customer/'+$('#T1').val(),
+                data: "",
+                success: function (data) {
+                    $('#T2').val(data.customerName);
+                    $('#T3').val(data.customerAddress);
+                },
+                error: function () {
+                    alert('Error...');
+                }
+            })
+        });
+    });
+</script>
+<style>
+    #tbl{
+        border:1px solid grey;
+    }
+    #tbl tr {
+         border: 1px solid grey;
+     }
+    #tbl tr th {
+        border: 1px solid grey;
+     }
+    #tbl tr th td {
+        border: 1px solid grey;
+             }
+</style>
